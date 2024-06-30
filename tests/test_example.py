@@ -1,43 +1,23 @@
-from hexlet_pytest.example import Node
-"""
-def test_node():
-    tree = Node(
-        9,
-        Node(
-            4,
-            Node(8),
-            Node(
-                6,
-                Node(3),
-                Node(7),
-            ),
-        ),
-        Node(
-            17,
-            right=Node(
-                22,
-                Node(20),
-            ),
-        ),
-    )
-    assert len(tree) == 9
-    assert tree.total() == 96
-    assert tree.to_list() == [9, 4, 8, 6, 3, 7, 17, 22, 20]
-    assert tree.every(lambda key: key <= 22) is True
-    assert tree.every(lambda key: key < 22) is False
-    assert tree.some(lambda key: key == 22) is True
-    assert tree.some(lambda key: key > 22) is False
-    assert tree.minimum() == 3
-    assert tree.maximum() == 22
-"""
-
-class N(Node):
-    """A simple subclass of Node."""
+from hexlet_pytest.example import MultiKeyDict
 
 
-def test_node_repr():
-    tree = Node(3, Node(1), Node(2))
-    assert repr(tree) == "Node(3, Node(1, None, None), Node(2, None, None))"
+def test_multikeydict_access():
+    mkd = MultiKeyDict(a=1, b='foo')
+    assert mkd['a'] == 1
+    assert mkd['b'] == 'foo'
 
-    tree_of_n = N(3, N(1), N(2))
-    assert repr(tree_of_n) == "N(3, N(1, None, None), N(2, None, None))"
+    mkd.alias(aa='a', bb='b')
+    assert mkd['aa'] == 1
+    assert mkd['bb'] == 'foo'
+
+
+def test_multikeydict_assignment():
+    mkd = MultiKeyDict(x=100, y=[10, 20])
+
+    mkd.alias(z='x')
+    mkd['z'] += 1
+    assert mkd['x'] == 101
+
+    mkd.alias(z='y')
+    mkd['z'] += [30]
+    assert mkd['y'] == [10, 20, 30]

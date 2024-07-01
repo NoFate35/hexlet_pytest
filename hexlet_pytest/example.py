@@ -1,54 +1,30 @@
-class MultiKeyDict(object):
-    """Словареподобный контейнер, позволяющий иметь псевдонимы ключей."""
+class TreeBuilder(object):
+    """Сборщик деревьев, работающий в виде менеждера контекста."""
 
-    def __init__(self, **kwargs):
-        """
-        Инициализирует контейнер.
+    # BEGIN (write your solution here)
+    def __init__(self):
+        self.l = []
+    
+    def __enter__(self):
+    
 
-        Arguments:
-            kwargs — пары "ключ-значение", которые будет содержать
-            контейнер сразу после инициализации.
+    def __exit__(self, exc_type, exc_val, exc_tb):
 
-        """
+    # END
+
+    def add(self, value):
+        """Добавляет в значение в текущую позицию в дереве."""
         # BEGIN (write your solution here)
-        
+        self.l
         # END
 
-    def __getitem__(self, key):
+    @property
+    def structure(self):
         """
-        Возвращает значение по ключу.
+        Возвращает текущую структуру дерева в виде вложенных списков.
 
-        Arguments:
-        - key — один из ключей, связанных со значением.
-
-        """
-        # BEGIN (write your solution here)
-        
-        # END
-
-    def __setitem__(self, key, value):
-        """
-        Сохраняет значение по указанному ключу.
-
-        Изменение затрагивает все псевдонимы ключа. Любой из псевдонимов
-        может быть указан в роли ключа.
-
-        Arguments:
-            key — ключ, по которому будет сохранено значение,
-            value — сохраняемое по указанному ключу значение.
-
-        """
-        # BEGIN (write your solution here)
-        
-        # END
-
-    def alias(self, **kwargs):
-        """
-        Добавляет псевдоним(ы) для существующих ключей.
-
-        Arguments:
-            kwargs — пары "новый ключ - старый ключ". Все "старые ключи"
-            должны уже присутствовать в контейнере.
+        Returns:
+            Список списков вида [1, [2, 3, [4], 5], 6, [7, 8]]
 
         """
         # BEGIN (write your solution here)

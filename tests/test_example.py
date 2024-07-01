@@ -1,23 +1,26 @@
-from hexlet_pytest.example import MultiKeyDict
+from example import TreeBuilder
 
 
-def test_multikeydict_access():
-    mkd = MultiKeyDict(a=1, b='foo')
-    assert mkd['a'] == 1
-    assert mkd['b'] == 'foo'
+def test_tree_builder():
+    tree = TreeBuilder()
+    tree.add('root')
+    with tree:
+        tree.add('first child')
+        tree.add('second child')
+        with tree:
+            tree.add('grandchild')
+        tree.add('bastard')
+        with tree:  # this subtree is empty intentionally
+            pass    # we need to do nothing
+        tree.add('another bastard')
 
-    mkd.alias(aa='a', bb='b')
-    assert mkd['aa'] == 1
-    assert mkd['bb'] == 'foo'
-
-
-def test_multikeydict_assignment():
-    mkd = MultiKeyDict(x=100, y=[10, 20])
-
-    mkd.alias(z='x')
-    mkd['z'] += 1
-    assert mkd['x'] == 101
-
-    mkd.alias(z='y')
-    mkd['z'] += [30]
-    assert mkd['y'] == [10, 20, 30]
+    assert tree.structure == [
+        'root',
+        [
+            'first child',
+            'second child',
+            ['grandchild'],
+            'bastard',
+            'another bastard',
+        ],
+    ]

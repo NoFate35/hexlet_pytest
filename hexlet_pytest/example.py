@@ -10,6 +10,7 @@ class TreeBuilder(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
 
+<<<<<<< HEAD
     # END
 
     def add(self, value):
@@ -29,4 +30,5 @@ class TreeBuilder(object):
         """
         # BEGIN (write your solution here)
         
-        # END
+        # END	
+>>>>>>> 0052b62 ( Changes to be committed:)

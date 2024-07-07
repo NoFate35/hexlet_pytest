@@ -1,4 +1,4 @@
-from example import TreeBuilder
+from hexlet_pytest.example import TreeBuilder
 
 
 def test_tree_builder():

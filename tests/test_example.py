@@ -1,26 +1,37 @@
-from hexlet_pytest.example import TreeBuilder
+from hexlet_pytest.example import PasswordValidator
 
 
-def test_tree_builder():
-    tree = TreeBuilder()
-    tree.add('root')
-    with tree:
-        tree.add('first child')
-        tree.add('second child')
-        with tree:
-            tree.add('grandchild')
-        tree.add('bastard')
-        with tree:  # this subtree is empty intentionally
-            pass    # we need to do nothing
-        tree.add('another bastard')
+def test_validate_with_default_options():
+    validator = PasswordValidator()
+    errors1 = validator.validate('qwertyui')
+    assert not errors1
 
-    assert tree.structure == [
-        'root',
-        [
-            'first child',
-            'second child',
-            ['grandchild'],
-            'bastard',
-            'another bastard',
-        ],
-    ]
+    errors2 = validator.validate('qwerty')
+    assert errors2 == {'min_len': 'too small'}
+
+    errors3 = validator.validate('another-password')
+    assert not errors3
+
+
+def test_validate_with_options():
+    options = {'contain_numbers': True}
+    validator = PasswordValidator(**options)
+    errors1 = validator.validate('qwertya3sdf')
+    assert not errors1
+
+    errors2 = validator.validate('qwerty')
+    assert errors2 == {
+        'min_len': 'too small',
+        'contain_numbers': 'should contain at least one number'
+        }
+    errors3 = validator.validate('q23ty')
+    assert errors3 == {'min_len': 'too small'}
+
+
+def test_validate_with_incorrect_options():
+    validator = PasswordValidator(contain_numberz=None)
+    errors1 = validator.validate('qwertya3sdf')
+    assert not errors1
+
+    errors2 = validator.validate('qwerty')
+    assert errors2 == {'min_len': 'too small'}

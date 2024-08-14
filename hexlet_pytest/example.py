@@ -1,51 +1,34 @@
-class TreeBuilder(object):
-    """Сборщик деревьев, работающий в виде менеждера контекста."""
-
+class PasswordValidator():
+    OPTIONS = {
+        'min_len': 8,
+        'contain_numbers': False,
+        }
     # BEGIN (write your solution here)
-    def __init__(self):
-        self.counter = 0
-        self.l = []
-
-    def __enter__(self):
-    	self.counter += 1
-    		
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-    	self.counter -=1
+    def __init__(self, **options):
+        for opt in options:
+            if opt not in self.OPTIONS:
+                del options[opt]
+        for opt in options:
+            if opt == 'min_len':
+                if not isinstance(options[opt], int):
+                    del options[opt]
+            if opt == 'contain_numbers':
+                if not isinstance(options[opt], bool):
+                    del options[opt]
+        self.OPTIONS = options
+        #print('options', options)
+    def validate(self, password):
+        char_len = len(password)
+        errors = dict()
+        if char_len < self.OPTIONS['min_len']:
+            errors['min_len'] = 'too small'
+        if self.OPTIONS['contain_numbers'] == True:
+            rez = self._has_number(password)
+            if rez is False:
+                errors['contain_numbers'] = 'should contain at least one number'
+        print('errors', errors)
+        return errors
     # END
 
-    def add(self, value):
-        """Добавляет в значение в текущую позицию в дереве."""
-        # BEGIN (write your solution here)
-        cou = 0
-        def walk(tree, cou):
-        	#print("tree", tree, "cou", cou, "val", value)
-        	diff = self.counter - cou
-        	if diff == 0:
-        		tree.append(value)
-        		return tree
-        	level = None
-        	for p, i in enumerate(tree):
-        		if isinstance(i, list):
-        			level = i
-        	if (diff == 1) and not level:
-        		tree.append([value])
-        		return tree
-        	elif (diff >= 1) and level:
-        		tree[p] = walk(level, cou + 1)
-        		return tree
-        self.l = walk(self.l, cou)
-        # END
-
-    @property
-    def structure(self):
-        """
-        Возвращает текущую структуру дерева в виде вложенных списков.
-
-        Returns:
-            Список списков вида [1, [2, 3, [4], 5], 6, [7, 8]]
-
-        """
-        # BEGIN (write your solution here)
-        return self.l
-        # END	
+    def _has_number(self, password):
+        return any(char.isdigit() for char in password)

@@ -1,37 +1,51 @@
-from hexlet_pytest.example import PasswordValidator
+from components import motherboard, power_supply, processor, memory, graphics_card, storage
+from solution import ComputerBuilder, ComputerDirector
+from computer import Computer
 
 
-def test_validate_with_default_options():
-    validator = PasswordValidator()
-    errors1 = validator.validate('qwertyui')
-    assert not errors1
+def test_builder():
+    builder = ComputerBuilder()
+    base = builder.pre_assemble(motherboard, power_supply)
+    assert isinstance(base, ComputerBuilder)
 
-    errors2 = validator.validate('qwerty')
-    assert errors2 == {'min_len': 'too small'}
-
-    errors3 = validator.validate('another-password')
-    assert not errors3
+    computer = base.add_processor(processor).get_computer()
+    assert isinstance(computer, Computer)
 
 
-def test_validate_with_options():
-    options = {'contain_numbers': True}
-    validator = PasswordValidator(**options)
-    errors1 = validator.validate('qwertya3sdf')
-    assert not errors1
+def test_director():
+    builder = ComputerBuilder()
+    director = ComputerDirector(builder)
+    director.build_basic_computer()
+    basic_computer = builder.get_computer()
 
-    errors2 = validator.validate('qwerty')
-    assert errors2 == {
-        'min_len': 'too small',
-        'contain_numbers': 'should contain at least one number'
-        }
-    errors3 = validator.validate('q23ty')
-    assert errors3 == {'min_len': 'too small'}
+    builder2 = ComputerBuilder()
+    basic_computer2 = builder2.pre_assemble(motherboard, power_supply) \
+        .add_processor(processor) \
+        .add_memory(memory) \
+        .add_storage(storage) \
+        .get_computer()
 
+    assert basic_computer == basic_computer2
 
-def test_validate_with_incorrect_options():
-    validator = PasswordValidator(contain_numberz=None)
-    errors1 = validator.validate('qwertya3sdf')
-    assert not errors1
+    gaming_computer = director.build_gaming_computer()
+    gaming_computer = builder.get_computer()
+    gaming_computer_2 = builder2.pre_assemble(motherboard, power_supply) \
+        .add_processor(processor) \
+        .add_memory(memory) \
+        .add_storage(storage) \
+        .add_graphics_card(graphics_card) \
+        .get_computer()
 
-    errors2 = validator.validate('qwerty')
-    assert errors2 == {'min_len': 'too small'}
+    assert gaming_computer == gaming_computer_2
+
+    director.build_server_computer()
+    server_computer = builder.get_computer()
+    server_computer_2 = builder2.pre_assemble(motherboard, power_supply) \
+        .add_processor(processor) \
+        .add_memory(memory) \
+        .add_storage(storage) \
+        .add_processor(processor) \
+        .add_memory(memory) \
+        .get_computer()
+
+    assert server_computer == server_computer_2

@@ -1,4 +1,4 @@
-from components import (
+from hexlet_pytest.components import (
     graphics_card,
     memory,
     motherboard,
@@ -6,7 +6,7 @@ from components import (
     processor,
     storage
     )
-from computer import Computer
+from hexlet_pytest.computer import Computer
 
 
 # BEGIN (write your solution here)

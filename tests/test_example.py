@@ -1,6 +1,6 @@
-from components import motherboard, power_supply, processor, memory, graphics_card, storage
-from solution import ComputerBuilder, ComputerDirector
-from computer import Computer
+from hexlet_pytest.components import motherboard, power_supply, processor, memory, graphics_card, storage
+from hexlet_pytest.example import ComputerBuilder, ComputerDirector
+from hexlet_pytest.computer import Computer
 
 
 def test_builder():

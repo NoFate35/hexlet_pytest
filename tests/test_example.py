@@ -1,51 +1,52 @@
-from hexlet_pytest.components import motherboard, power_supply, processor, memory, graphics_card, storage
-from hexlet_pytest.example import ComputerBuilder, ComputerDirector
-from hexlet_pytest.computer import Computer
+from hexlet_pytest.example import Obj
+import pytest
 
 
-def test_builder():
-    builder = ComputerBuilder()
-    base = builder.pre_assemble(motherboard, power_supply)
-    assert isinstance(base, ComputerBuilder)
+@pytest.fixture()
+def items():
+    return {
+        'key': 'value',
+        'key2': {
+            'key3': 'value3'
+        }
+    }
 
-    computer = base.add_processor(processor).get_computer()
-    assert isinstance(computer, Computer)
+
+def test_simple_get(items):
+    obj = Obj(items)
+
+    assert obj['key'] == 'value'
+    assert obj.key == 'value'
 
 
-def test_director():
-    builder = ComputerBuilder()
-    director = ComputerDirector(builder)
-    director.build_basic_computer()
-    basic_computer = builder.get_computer()
+def test_nested_get(items):
+    obj = Obj(items)
 
-    builder2 = ComputerBuilder()
-    basic_computer2 = builder2.pre_assemble(motherboard, power_supply) \
-        .add_processor(processor) \
-        .add_memory(memory) \
-        .add_storage(storage) \
-        .get_computer()
+    assert obj['key2']['key3'] == 'value3'
+    assert obj.key2.key3 == 'value3'
+    assert obj['key2'].key3 == 'value3'
 
-    assert basic_computer == basic_computer2
 
-    gaming_computer = director.build_gaming_computer()
-    gaming_computer = builder.get_computer()
-    gaming_computer_2 = builder2.pre_assemble(motherboard, power_supply) \
-        .add_processor(processor) \
-        .add_memory(memory) \
-        .add_storage(storage) \
-        .add_graphics_card(graphics_card) \
-        .get_computer()
+def test_none_key(items):
+    obj = Obj(items)
 
-    assert gaming_computer == gaming_computer_2
+    assert obj['foo'] is None
+    assert obj.foo is None
 
-    director.build_server_computer()
-    server_computer = builder.get_computer()
-    server_computer_2 = builder2.pre_assemble(motherboard, power_supply) \
-        .add_processor(processor) \
-        .add_memory(memory) \
-        .add_storage(storage) \
-        .add_processor(processor) \
-        .add_memory(memory) \
-        .get_computer()
 
-    assert server_computer == server_computer_2
+def test_simple_set(items):
+    obj = Obj(items)
+
+    obj.key = 'new value'
+    assert obj['key'] == 'new value'
+    assert obj.key == 'new value'
+
+
+def test_nested_set(items):
+    obj = Obj(items)
+
+    obj.key2.key3 = 'new value'
+    assert obj['key2']['key3'] == 'new value'
+    assert obj.key2.key3 == 'new value'
+
+    

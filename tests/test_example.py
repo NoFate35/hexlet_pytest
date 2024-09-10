@@ -1,52 +1,60 @@
-from hexlet_pytest.example import Obj
+from hexlet_pytest.example import Proxy
 import pytest
 
 
-@pytest.fixture()
-def items():
-    return {
-        'key': 'value',
-        'key2': {
-            'key3': 'value3'
-        }
-    }
+class sourceObject:
+    def __init__(self, attrs):
+        for key, value in attrs.items():
+            self.__setattr__(key, value)
+
+    def foo(self):
+        return 'foobar'
+
+    def wrong_foo(self):
+        raise Exception('method with error')
 
 
-def test_simple_get(items):
-    obj = Obj(items)
+def test_existing_properties():
+    d = {'key': 42}
+    source_obj = sourceObject(d)
+    proxy = Proxy(source_obj)
 
-    assert obj['key'] == 'value'
-    assert obj.key == 'value'
-
-
-def test_nested_get(items):
-    obj = Obj(items)
-
-    assert obj['key2']['key3'] == 'value3'
-    assert obj.key2.key3 == 'value3'
-    assert obj['key2'].key3 == 'value3'
+    assert proxy.foo() == source_obj.foo()
+    assert proxy.key == source_obj.key
 
 
-def test_none_key(items):
-    obj = Obj(items)
-
-    assert obj['foo'] is None
-    assert obj.foo is None
-
-
-def test_simple_set(items):
-    obj = Obj(items)
-
-    obj.key = 'new value'
-    assert obj['key'] == 'new value'
-    assert obj.key == 'new value'
+def test_set_attributes():
+    d = {'key': 42}
+    source_obj = sourceObject(d)
+    proxy = Proxy(source_obj)
+    proxy.key2 = 'foo'
+    assert proxy.key2 == 'foo'
 
 
-def test_nested_set(items):
-    obj = Obj(items)
+def test_logging():
+    d = {'key': 42}
+    source_obj = sourceObject(d)
+    proxy = Proxy(source_obj)
 
-    obj.key2.key3 = 'new value'
-    assert obj['key2']['key3'] == 'new value'
-    assert obj.key2.key3 == 'new value'
+    # make some calls
+    proxy.key
+    proxy.foo()
 
-    
+    assert len(proxy.get_log()) == 2
+
+
+def test_errors_logging():
+    d = {'key': 'value'}
+    source_obj = sourceObject(d)
+    proxy = Proxy(source_obj)
+
+    # make some right and wrong attributes calles
+    proxy.key
+    proxy.foo()
+    with pytest.raises(Exception):
+        proxy.wrong_foo(), "Proxy should reraise exceptions"
+
+    # check logging
+    assert len(proxy.get_log()) == 2
+    # check errors logging
+    assert len(proxy.get_errors_log()) == 1
